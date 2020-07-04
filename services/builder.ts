@@ -7,13 +7,14 @@ import { UniteLegaleSortant } from '../data/uniteLegaleSortant';
 export class Builder {
 
     /**
+     * can sand an empty object if denomination = null
      * @param EtablissementEntrant
      * @returns EtablissementSortant
      */
     public etablissementEntrantToSortant(entrant: EtablissementEntrant): EtablissementSortant {
         var sortant: EtablissementSortant = new EtablissementSortant;
         sortant.denomination = this.findDenominationEtablissement(entrant);
-        if (sortant.denomination = null) {
+        if (sortant.denomination === null) {
             return sortant;
         }
         sortant._id = entrant.siret;
@@ -22,7 +23,11 @@ export class Builder {
         sortant.date_creation = entrant.date_creation;
         sortant.effectifs = TrancheEffectif[this.findEffectif(entrant.tranche_effectifs)];
         sortant.activite_principale = this.findActivite(entrant);
-        sortant.etablissement_siege = entrant.etablissement_siege;
+        if(entrant.etablissement_siege===false){
+            sortant.etablissement_siege = entrant.etablissement_siege;
+        }else {
+            sortant.etablissement_siege = true;
+        }
         sortant.complement_adresse = entrant.complement_adresse;
         sortant.numero_voie = entrant.numero_voie;
         sortant.indice_repetition = entrant.indice_repetition;
@@ -34,7 +39,6 @@ export class Builder {
         sortant.libelle_cedex = entrant.libelle_cedex;
         sortant.etat_administratif = entrant.etat_administratif;
         sortant.caractere_employeur = entrant.caractere_employeur;
-
         return sortant;
     }
 
@@ -60,9 +64,12 @@ export class Builder {
         sortant.etablissements = this.arrayEtablissementBuilder(entrant.etablissements);
         return sortant;
     }
-
-    private arrayEtablissementBuilder(listeEntrant: Array<EtablissementEntrant>): Array<EtablissementSortant> {
-        var listeSortant: Array<EtablissementSortant> = new Array;
+    /**
+     * @param listeEtablissementEntrant
+     * @returns listeEtablissementSortant 
+     */
+    public arrayEtablissementBuilder(listeEntrant: Array<EtablissementEntrant>): Array<EtablissementSortant> {
+        var listeSortant: Array<EtablissementSortant> = new Array<EtablissementSortant>();
         for (let etablissement of listeEntrant) {
             listeSortant.push(this.etablissementEntrantToSortant(etablissement));
         }
@@ -134,13 +141,16 @@ export class Builder {
         return date;
     }
 
-    private findEffectif(tranche : string) :number{
+    private findEffectif(tranche: string): number {
         let code_effectif: number;
-        try {
-            return code_effectif = parseInt(tranche);
-        } catch {
-            return code_effectif = -1;
+        if (tranche === null) {
+            return code_effectif = TrancheEffectif["Unités non employeuses"];
+        } else {
+            try {
+                return code_effectif = parseInt(tranche);
+            } catch {
+                return code_effectif = TrancheEffectif["Unités non employeuses"];
+            }
         }
     }
-
 }

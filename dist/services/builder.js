@@ -6,13 +6,14 @@ const tranche_effectif_1 = require("../data/tranche_effectif");
 const uniteLegaleSortant_1 = require("../data/uniteLegaleSortant");
 class Builder {
     /**
+     * can sand an empty object if denomination = null
      * @param EtablissementEntrant
      * @returns EtablissementSortant
      */
     etablissementEntrantToSortant(entrant) {
         var sortant = new etablissementSortant_1.EtablissementSortant;
         sortant.denomination = this.findDenominationEtablissement(entrant);
-        if (sortant.denomination = null) {
+        if (sortant.denomination === null) {
             return sortant;
         }
         sortant._id = entrant.siret;
@@ -21,7 +22,12 @@ class Builder {
         sortant.date_creation = entrant.date_creation;
         sortant.effectifs = tranche_effectif_1.TrancheEffectif[this.findEffectif(entrant.tranche_effectifs)];
         sortant.activite_principale = this.findActivite(entrant);
-        sortant.etablissement_siege = entrant.etablissement_siege;
+        if (entrant.etablissement_siege === false) {
+            sortant.etablissement_siege = entrant.etablissement_siege;
+        }
+        else {
+            sortant.etablissement_siege = true;
+        }
         sortant.complement_adresse = entrant.complement_adresse;
         sortant.numero_voie = entrant.numero_voie;
         sortant.indice_repetition = entrant.indice_repetition;
@@ -57,8 +63,12 @@ class Builder {
         sortant.etablissements = this.arrayEtablissementBuilder(entrant.etablissements);
         return sortant;
     }
+    /**
+     * @param listeEtablissementEntrant
+     * @returns listeEtablissementSortant
+     */
     arrayEtablissementBuilder(listeEntrant) {
-        var listeSortant = new Array;
+        var listeSortant = new Array();
         for (let etablissement of listeEntrant) {
             listeSortant.push(this.etablissementEntrantToSortant(etablissement));
         }
@@ -136,11 +146,16 @@ class Builder {
     }
     findEffectif(tranche) {
         let code_effectif;
-        try {
-            return code_effectif = parseInt(tranche);
+        if (tranche === null) {
+            return code_effectif = tranche_effectif_1.TrancheEffectif["Unités non employeuses"];
         }
-        catch (_a) {
-            return code_effectif = -1;
+        else {
+            try {
+                return code_effectif = parseInt(tranche);
+            }
+            catch (_a) {
+                return code_effectif = tranche_effectif_1.TrancheEffectif["Unités non employeuses"];
+            }
         }
     }
 }
