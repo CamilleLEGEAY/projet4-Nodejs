@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.apiRouter = void 0;
+exports.update = exports.apiRouter = void 0;
 const tslib_1 = require("tslib");
 const express_1 = require("express");
 const builder_1 = require("../services/builder");
@@ -11,19 +11,19 @@ const myMongoClient = require('./my_generic_mongo_client');
 const builder = new builder_1.Builder();
 const dateService = new date_1.DateServices();
 const urlEtablissement = 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/?per_page=100';
-const urlUniteLegale = 'https://entreprise.data.gouv.fr/api/sirene/v3/unites_legales/?per_page=100';
 /**
  * update mongoDB
  */
-exports.apiRouter.route('/test')
-    .get(async function (req, res) {
+async function update() {
     let dateMAJ = new Date();
     let yesterday = dateService.yesterday(dateMAJ);
     let daysAgo = dateService.daysAgo(dateMAJ, 15);
-    let repOne = await cleanMongoDB(daysAgo);
-    let repTwo = await fillMongoDB(yesterday);
-    res.send("ok " + repOne + " " + repTwo);
-});
+    await cleanMongoDB(daysAgo);
+    await fillMongoDB(yesterday);
+    console.log("tout va bien");
+}
+exports.update = update;
+;
 /**
  * fill in database with businesses created yesterday
  */
