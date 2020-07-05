@@ -13,9 +13,6 @@ class Builder {
     etablissementEntrantToSortant(entrant) {
         var sortant = new etablissementSortant_1.EtablissementSortant;
         sortant.denomination = this.findDenominationEtablissement(entrant);
-        if (sortant.denomination === null) {
-            return sortant;
-        }
         sortant._id = entrant.siret;
         sortant.siren = entrant.siren;
         sortant.siret = entrant.siret;

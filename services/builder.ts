@@ -14,9 +14,6 @@ export class Builder {
     public etablissementEntrantToSortant(entrant: EtablissementEntrant): EtablissementSortant {
         var sortant: EtablissementSortant = new EtablissementSortant;
         sortant.denomination = this.findDenominationEtablissement(entrant);
-        if (sortant.denomination === null) {
-            return sortant;
-        }
         sortant._id = entrant.siret;
         sortant.siren = entrant.siren;
         sortant.siret = entrant.siret;
