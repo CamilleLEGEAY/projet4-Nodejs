@@ -31,7 +31,7 @@ var executeInMongoDbConnection = function(callback_with_db) {
 	//currentDb = db; //with mongodb client v2.x
 	currentDb = db.db(dbName);//with mongodb client >= v3.x
 	callback_with_db(currentDb);
-	db.close();
+	//db.close();
 	});
   }else{
 	callback_with_db(currentDb);  
@@ -68,14 +68,7 @@ var genericFindList = function(collectionName,query,callback_with_err_and_array)
 
 var genericRemove = function(collectionName,query,callback_with_err_and_result) {
 	executeInMongoDbConnection( function(db) {
-		db.collection(collectionName).remove(query ,function(err, obj) {
-		if(err!=null) {
-			console.log("genericRemove error = " + err);
-				}
-		//if (err) throw err;
-		console.log(obj.result.n + " document(s) deleted");
-		callback_with_err_and_result(err,obj.result);
-		});
+		db.collection(collectionName).deleteMany(query);
    });
 };
 

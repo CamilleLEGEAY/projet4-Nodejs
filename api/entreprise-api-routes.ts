@@ -21,21 +21,17 @@ const urlUniteLegale: string = 'https://entreprise.data.gouv.fr/api/sirene/v3/un
  */
 apiRouter.route('/test')
     .get(async function (req: Request, res: Response) {
-        //calculer la date d'hier au format AAAA-MM-jj
-        var dateMAJ = new Date()
-        var yesterday = dateService.yesterday(dateMAJ);
-        var daysAgo = dateService.daysAgo(dateMAJ, 15);
-        //lancer la suppression des entreprise créée il y a plus de x jours dans mongoDB
-        //await cleanMongoDB(daysAgo);
-        //lancer le remplissage de mongoDB avec les entreprises créées ou modifiée hier
-        res.send(await fillMongoDB(yesterday));
+        let dateMAJ = new Date()
+        let yesterday = dateService.yesterday(dateMAJ);
+        let daysAgo = dateService.daysAgo(dateMAJ, 15);
+        let repOne = await cleanMongoDB(daysAgo);
+        let repTwo = await fillMongoDB(yesterday);
+        res.send("ok "+repOne+" "+repTwo);
     })
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /**
  * fill in database with businesses created yesterday
  */
-async function fillMongoDB(dateCreation : string): Promise<string> {
+async function fillMongoDB(dateCreation: string): Promise<string> {
     let resultat: Array<EtablissementEntrant> = await findAllPagesEtablissements(dateCreation);
     let listeAEnregistrer: Array<EtablissementSortant> = builder.arrayEtablissementBuilder(resultat);
     for (let etablissement of listeAEnregistrer) {
@@ -43,12 +39,11 @@ async function fillMongoDB(dateCreation : string): Promise<string> {
     }
     return "fillMongoDB lancé";
 }
-
 /**
  * crea the liste of new businesses by browsing pages
  * 2 requests/second (API SIRENE allow 7/second) 
  */
-async function findAllPagesEtablissements(dateCreation : string): Promise<EtablissementEntrant[]> {
+async function findAllPagesEtablissements(dateCreation: string): Promise<EtablissementEntrant[]> {
     let page: number = 1;
     let reponse: ReponseApiEtablissements;
     let listeEtablissements: Array<EtablissementEntrant> = new Array<EtablissementEntrant>();
@@ -61,13 +56,12 @@ async function findAllPagesEtablissements(dateCreation : string): Promise<Etabli
     while (reponse.meta.total_pages > reponse.meta.page);
     return listeEtablissements;
 }
-
 /**
  * provide a page of results from the API SIRENE for businesses created yesterday
  * no treatment because we need the meta in other function to know the number of pages
  * @param numeroPage 
  */
-async function findOnePageEtablissements(numeroPage: number, dateCreation : string): Promise<ReponseApiEtablissements> {
+async function findOnePageEtablissements(numeroPage: number, dateCreation: string): Promise<ReponseApiEtablissements> {
     try {
         let url = urlEtablissement + "&page=" + numeroPage + "&date_creation=" + dateCreation;
         let reponseJSON: ReponseApiEtablissements = (await axios.get(url)).data;
@@ -78,14 +72,14 @@ async function findOnePageEtablissements(numeroPage: number, dateCreation : stri
         throw new Error(e);
     }
 }
-    //methode delete etablissements crees il y a un mois
-    //recuperer list des entreprises créée il y a plus d'un mois
-    //supprimer tous les établissements de la liste dans mongodb
-
-
-
-
-
+/**
+ * remove oldest data from mongoDB
+ * @param dateCreation 
+ */
+async function cleanMongoDB(dateCreation: string): Promise<string> {
+    myMongoClient.genericRemove('etablissement', {date_creation : dateCreation});
+    return "cleanMongoDB lancé";
+}
 
     ///////////////Partie appel dans mongoDB///////////////
 

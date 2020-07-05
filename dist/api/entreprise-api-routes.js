@@ -19,16 +19,13 @@ const urlUniteLegale = 'https://entreprise.data.gouv.fr/api/sirene/v3/unites_leg
  */
 exports.apiRouter.route('/test')
     .get(async function (req, res) {
-    //calculer la date d'hier au format AAAA-MM-jj
-    var dateMAJ = new Date();
-    var yesterday = dateService.yesterday(dateMAJ);
-    var daysAgo = dateService.daysAgo(dateMAJ, 15);
-    //lancer la suppression des entreprise créée il y a plus de x jours dans mongoDB
-    //await cleanMongoDB(daysAgo);
-    //lancer le remplissage de mongoDB avec les entreprises créées ou modifiée hier
-    res.send(await fillMongoDB(yesterday));
+    let dateMAJ = new Date();
+    let yesterday = dateService.yesterday(dateMAJ);
+    let daysAgo = dateService.daysAgo(dateMAJ, 15);
+    let repOne = await cleanMongoDB(daysAgo);
+    let repTwo = await fillMongoDB(yesterday);
+    res.send("ok " + repOne + " " + repTwo);
 });
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * fill in database with businesses created yesterday
  */
@@ -72,8 +69,13 @@ async function findOnePageEtablissements(numeroPage, dateCreation) {
         throw new Error(e);
     }
 }
-//methode delete etablissements crees il y a un mois
-//recuperer list des entreprises créée il y a plus d'un mois
-//supprimer tous les établissements de la liste dans mongodb
+/**
+ * remove oldest data from mongoDB
+ * @param dateCreation
+ */
+async function cleanMongoDB(dateCreation) {
+    myMongoClient.genericRemove('etablissement', { date_creation: dateCreation });
+    return "cleanMongoDB lancé";
+}
 ///////////////Partie appel dans mongoDB///////////////
 ///////////////Partie appel direct en externe///////////////
