@@ -16,4 +16,3 @@ exports.apiRouter.route('/findAll')
             res.send(liste);
     });
 });
-///////////////Partie appel direct en externe///////////////
