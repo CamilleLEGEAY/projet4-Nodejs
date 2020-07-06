@@ -29,7 +29,7 @@ async function fillMongoDB(dateCreation) {
     let resultat = await findAllPagesEtablissements(dateCreation);
     let listeAEnregistrer = builder.arrayEtablissementBuilder(resultat);
     for (let etablissement of listeAEnregistrer) {
-        myMongoClient.genericInsertOne('etablissement', etablissement, function (err, etablissement) { });
+        myMongoClient.genericInsertOne(process.env.COLLECTION, etablissement, function (err, etablissement) { });
     }
     return "fillMongoDB lancé";
 }
@@ -70,6 +70,6 @@ async function findOnePageEtablissements(numeroPage, dateCreation) {
  * @param dateCreation
  */
 async function cleanMongoDB(dateCreation) {
-    myMongoClient.genericRemove('etablissement', { date_creation: dateCreation }, function (err, etablissement) { });
+    myMongoClient.genericRemove(process.env.COLLECTION, { date_creation: dateCreation }, function (err, etablissement) { });
     return "cleanMongoDB lancé";
 }

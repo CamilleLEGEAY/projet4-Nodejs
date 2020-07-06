@@ -9,7 +9,7 @@ export const apiRouter = Router();
  */
 apiRouter.route('/findAll')
     .get(function (req, res, next) {
-        myMongoClient.genericFindList('etablissement', {}, function (err: any, liste: any) {
+        myMongoClient.genericFindList(process.env.COLLECTION, {}, function (err: any, liste: any) {
             if (err)
                 res.send(err)
             else res.send(liste);

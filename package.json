@@ -18,6 +18,7 @@
   "homepage": "https://github.com/CamilleLEGEAY/projet4-Nodejs#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.5.9",
     "node-cron": "^2.0.3",

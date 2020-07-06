@@ -2,9 +2,10 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 var assert = require('assert');
+require('dotenv').config()
 
-var dbName = "test" //by default
-var mongoDbUrl = 'mongodb://127.0.0.1:27017/' + this.dbName; //by default
+var dbName = process.env.DB_NAME
+var mongoDbUrl = process.env.MONGODB_URI + this.dbName; //by default
 var currentDb = null; //current MongoDB connection
 
 var setMongoDbUrl = function (dbUrl) {

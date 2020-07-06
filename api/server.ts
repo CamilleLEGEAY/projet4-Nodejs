@@ -1,7 +1,9 @@
+
 import express  from 'express';
 import * as bodyParser from 'body-parser';
 import { update } from './dailyUpdate';
 import { apiRouter } from './api-routes';
+require('dotenv').config()
 
 var app = express();
 var jsonParser = bodyParser.json() ;
@@ -10,8 +12,7 @@ app.use(jsonParser);
 
 app.use(apiRouter);
 
-app.listen(9998 , function () {
-  console.log("http://localhost:9998");
+app.listen(process.env.PORT , function () {
 });
 
 const cron = require("node-cron");
