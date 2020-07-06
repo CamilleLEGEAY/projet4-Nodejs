@@ -1,6 +1,7 @@
 import express  from 'express';
 import * as bodyParser from 'body-parser';
-import { apiRouter, update } from './dailyUpdate';
+import { update } from './dailyUpdate';
+import { apiRouter } from './api-routes';
 
 var app = express();
 var jsonParser = bodyParser.json() ;

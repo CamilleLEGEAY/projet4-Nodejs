@@ -1,12 +1,9 @@
-import { Request, Response, Router } from 'express';
 import { EtablissementEntrant } from '../data/etablissementEntrant';
 import { Builder } from '../services/builder';
 import { DateServices } from '../services/date';
 import { ReponseApiEtablissements } from '../data/reponsesAPI';
 import axios from 'axios';
 import { EtablissementSortant } from '../data/etablissementSortant';
-
-export const apiRouter = Router();
 
 const myMongoClient = require('./my_generic_mongo_client');
 const builder: Builder = new Builder();

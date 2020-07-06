@@ -1,12 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.update = exports.apiRouter = void 0;
+exports.update = void 0;
 const tslib_1 = require("tslib");
-const express_1 = require("express");
 const builder_1 = require("../services/builder");
 const date_1 = require("../services/date");
 const axios_1 = tslib_1.__importDefault(require("axios"));
-exports.apiRouter = express_1.Router();
 const myMongoClient = require('./my_generic_mongo_client');
 const builder = new builder_1.Builder();
 const dateService = new date_1.DateServices();
