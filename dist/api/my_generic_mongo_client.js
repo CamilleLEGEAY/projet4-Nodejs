@@ -5,7 +5,7 @@ var assert = require('assert');
 require('dotenv').config()
 
 var dbName = process.env.DB_NAME
-var mongoDbUrl = process.env.MONGODB_URI + this.dbName; //by default
+var mongoDbUrl = process.env.MONGODB_URI; //by default
 var currentDb = null; //current MongoDB connection
 
 var setMongoDbUrl = function (dbUrl) {

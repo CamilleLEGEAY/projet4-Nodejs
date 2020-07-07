@@ -10,6 +10,8 @@ const builder: Builder = new Builder();
 const dateService: DateServices = new DateServices();
 const urlEtablissement: string = 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/?per_page=100';
 
+var reponse: ReponseApiEtablissements;
+
 /**
  * update mongoDB
  */
@@ -28,6 +30,9 @@ async function fillMongoDB(dateCreation: string): Promise<string> {
     let resultat: Array<EtablissementEntrant> = await findAllPagesEtablissements(dateCreation);
     let listeAEnregistrer: Array<EtablissementSortant> = builder.arrayEtablissementBuilder(resultat);
     for (let etablissement of listeAEnregistrer) {
+        if(reponse.meta.total_results>200){
+            await new Promise(r => setTimeout(r, 100));
+        }
         myMongoClient.genericInsertOne(process.env.COLLECTION, etablissement, function(err:any ,etablissement:any){});
     }
     return "fillMongoDB lancé";
@@ -38,7 +43,6 @@ async function fillMongoDB(dateCreation: string): Promise<string> {
  */
 async function findAllPagesEtablissements(dateCreation: string): Promise<EtablissementEntrant[]> {
     let page: number = 1;
-    let reponse: ReponseApiEtablissements;
     let listeEtablissements: Array<EtablissementEntrant> = new Array<EtablissementEntrant>();
     do {
         reponse = await findOnePageEtablissements(page, dateCreation);
@@ -47,6 +51,7 @@ async function findAllPagesEtablissements(dateCreation: string): Promise<Etablis
         listeEtablissements = listeEtablissements.concat(reponse.etablissements);
     }
     while (reponse.meta.total_pages > reponse.meta.page);
+    console.log("nombre d'entreprise à créer : "+reponse.meta.total_results);
     return listeEtablissements;
 }
 /**
@@ -62,7 +67,7 @@ async function findOnePageEtablissements(numeroPage: number, dateCreation: strin
     }
     catch (e) {
         console.log(e);
-        throw new Error(e);
+        //throw new Error(e);
     }
 }
 /**

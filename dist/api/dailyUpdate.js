@@ -9,6 +9,7 @@ const myMongoClient = require('./my_generic_mongo_client');
 const builder = new builder_1.Builder();
 const dateService = new date_1.DateServices();
 const urlEtablissement = 'https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/?per_page=100';
+var reponse;
 /**
  * update mongoDB
  */
@@ -29,6 +30,9 @@ async function fillMongoDB(dateCreation) {
     let resultat = await findAllPagesEtablissements(dateCreation);
     let listeAEnregistrer = builder.arrayEtablissementBuilder(resultat);
     for (let etablissement of listeAEnregistrer) {
+        if (reponse.meta.total_results > 200) {
+            await new Promise(r => setTimeout(r, 100));
+        }
         myMongoClient.genericInsertOne(process.env.COLLECTION, etablissement, function (err, etablissement) { });
     }
     return "fillMongoDB lancé";
@@ -39,7 +43,6 @@ async function fillMongoDB(dateCreation) {
  */
 async function findAllPagesEtablissements(dateCreation) {
     let page = 1;
-    let reponse;
     let listeEtablissements = new Array();
     do {
         reponse = await findOnePageEtablissements(page, dateCreation);
@@ -47,6 +50,7 @@ async function findAllPagesEtablissements(dateCreation) {
         page++;
         listeEtablissements = listeEtablissements.concat(reponse.etablissements);
     } while (reponse.meta.total_pages > reponse.meta.page);
+    console.log("nombre d'entreprise à créer : " + reponse.meta.total_results);
     return listeEtablissements;
 }
 /**
@@ -62,7 +66,7 @@ async function findOnePageEtablissements(numeroPage, dateCreation) {
     }
     catch (e) {
         console.log(e);
-        throw new Error(e);
+        //throw new Error(e);
     }
 }
 /**

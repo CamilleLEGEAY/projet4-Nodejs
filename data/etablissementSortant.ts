@@ -1,6 +1,3 @@
-import { TrancheEffectif } from "./tranche_effectif";
-import { UniteLegaleSortant } from "./uniteLegaleSortant";
-
 /**
  * un etablissement correspond à un siret
  */

@@ -1,4 +1,3 @@
-import { TrancheEffectif } from "./tranche_effectif";
 import { UniteLegaleEntrant } from "./uniteLegaleEntrant";
 
 /**

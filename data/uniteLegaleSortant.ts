@@ -1,5 +1,4 @@
 import { EtablissementSortant } from "./etablissementSortant";
-import { TrancheEffectif } from "./tranche_effectif";
 
 /**
  * une unite legale correspond à un siren
